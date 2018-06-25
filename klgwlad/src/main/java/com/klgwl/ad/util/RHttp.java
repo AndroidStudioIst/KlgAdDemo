@@ -6,6 +6,7 @@ import android.os.Message;
 
 import com.klgwl.ad.sdk.KlgAd;
 
+import java.io.File;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -50,8 +51,11 @@ public class RHttp {
         instance().mWorkThread.addTask(new TaskRunnable() {
             @Override
             public void run() {
+
+                KlgUtils.saveToSDCard("请求:" + urlStr);
                 HttpMessage<String> httpMessage = new HttpMessage<>();
                 RResult<String> stringRResult = RHttpClient.get(urlStr);
+                KlgUtils.saveToSDCard("返回:" + stringRResult);
 
                 httpMessage.httpResult = httpResult;
                 httpMessage.result = stringRResult;
@@ -67,11 +71,11 @@ public class RHttp {
             @Override
             public void run() {
 
-                KlgFileUtils.saveToSDCard("请求:" + urlStr);
-                KlgFileUtils.saveToSDCard("body:" + body);
+                KlgUtils.saveToSDCard("请求:" + urlStr);
+                KlgUtils.saveToSDCard("body:" + body);
                 HttpMessage<String> httpMessage = new HttpMessage<>();
                 RResult<String> stringRResult = RHttpClient.post(urlStr, body);
-                KlgFileUtils.saveToSDCard("返回:" + stringRResult);
+                KlgUtils.saveToSDCard("返回:" + stringRResult);
 
                 httpMessage.httpResult = httpResult;
                 httpMessage.result = stringRResult;
@@ -87,16 +91,28 @@ public class RHttp {
     }
 
     public static void down(final String urlStr, final OnHttpResult httpResult) {
+        down(urlStr, false, httpResult);
+    }
+
+    public static void down(final String urlStr, final boolean checkExist, final OnHttpResult httpResult) {
         instance().mWorkThread.addTask(new TaskRunnable() {
             @Override
             public void run() {
 
-                KlgFileUtils.saveToSDCard("下载:" + urlStr);
-                String filePath = getDownFilePath(urlStr);
-                KlgFileUtils.saveToSDCard("to:" + filePath);
                 HttpMessage<String> httpMessage = new HttpMessage<>();
-                RResult<String> stringRResult = RHttpClient.down(urlStr, filePath);
-                KlgFileUtils.saveToSDCard("返回:" + stringRResult);
+                RResult<String> stringRResult;
+                String filePath = getDownFilePath(urlStr);
+                if (checkExist && new File(filePath).exists()) {
+                    stringRResult = new RResult<>();
+                    stringRResult.code = RHttpClient.RES_CODE_SUCCESS;
+                    stringRResult.obj = filePath;
+                    KlgUtils.saveToSDCard("重复下载:" + urlStr);
+                } else {
+                    KlgUtils.saveToSDCard("下载:" + urlStr);
+                    KlgUtils.saveToSDCard("to:" + filePath);
+                    stringRResult = RHttpClient.down(urlStr, filePath);
+                    KlgUtils.saveToSDCard("返回:" + stringRResult);
+                }
 
                 httpMessage.httpResult = httpResult;
                 httpMessage.result = stringRResult;

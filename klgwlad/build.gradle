@@ -4,7 +4,7 @@ android {
     compileSdkVersion 27
 
     defaultConfig {
-        minSdkVersion 11
+        minSdkVersion 14
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
@@ -29,4 +29,5 @@ android {
 
 dependencies {
     //api 'com.android.support:appcompat-v7:27.1.1'
+    api 'pl.droidsonroids.gif:android-gif-drawable:1.2.12'
 }

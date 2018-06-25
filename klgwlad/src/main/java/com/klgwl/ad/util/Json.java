@@ -91,18 +91,18 @@ public class Json {
                         }
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    //e.printStackTrace();
                     jsonReader.skipValue();
                 }
             }
             jsonReader.endObject();
 
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
             try {
                 jsonReader.skipValue();
             } catch (IOException e1) {
-                e1.printStackTrace();
+                //e1.printStackTrace();
             }
         }
         return result;
@@ -128,17 +128,17 @@ public class Json {
                         list.add(readerObject(jsonReader, fieldType));
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    //e.printStackTrace();
                     jsonReader.skipValue();
                 }
             }
             jsonReader.endArray();
         } catch (IOException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
             try {
                 jsonReader.skipValue();
             } catch (IOException e1) {
-                e1.printStackTrace();
+                //e1.printStackTrace();
             }
         }
     }

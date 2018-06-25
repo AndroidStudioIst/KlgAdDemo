@@ -6,23 +6,21 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import com.klgwl.ad.sdk.DataWrap
-import com.klgwl.ad.sdk.KlgAd
 import com.klgwl.ad.sdk.SdkParam
 import com.klgwl.ad.util.Json
 import com.klgwl.ad.util.L
 import com.klgwl.ad.util.RHttp
+import com.klgwl.ad.widget.KlgwlAdLayout
 
 class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-
-        KlgAd.init(application, 1858505698, "7f27dfbe2a1d3891d6e08ceed2e61806", BuildConfig.DEBUG)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             requestPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), 100)
         }
+        setContentView(R.layout.activity_main)
 
         findViewById<View>(R.id.get).setOnClickListener {
             RHttp.get("http://service.klgwl.com/adv/adrequest") {
@@ -44,6 +42,10 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             }
+        }
+
+        findViewById<View>(R.id.refresh).setOnClickListener {
+            findViewById<KlgwlAdLayout>(R.id.ad_layout).refreshAd()
         }
     }
 }

@@ -6,6 +6,7 @@ import android.content.Context;
 import android.os.Build;
 import android.telephony.TelephonyManager;
 
+import com.klgwl.ad.util.KlgUtils;
 import com.klgwl.ad.util.L;
 
 import java.io.File;
@@ -40,6 +41,8 @@ public class KlgAd {
         KlgAd.appkey = appkey;
         initImei();
         L.init(debug, TAG);
+
+        KlgUtils.saveToSDCard("init ->appid:" + appid + " appkey:" + appkey + " debug:" + debug);
     }
 
 

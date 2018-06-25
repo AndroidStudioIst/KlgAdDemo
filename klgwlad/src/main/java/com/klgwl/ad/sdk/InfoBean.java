@@ -72,7 +72,7 @@ public class InfoBean {
             device_id = KlgAd.initImei();
             anid = DeviceUtils.getAndroidID();
             mac = DeviceUtils.getMacAddress();
-            os = Build.VERSION.RELEASE + " " + Build.VERSION.SDK_INT;
+            os = "Android " + Build.VERSION.RELEASE + " " + Build.VERSION.SDK_INT;
             brand = Build.BRAND;
             model = Build.MODEL;
             sw = KlgAd.mApplication.getResources().getDisplayMetrics().widthPixels;
@@ -112,7 +112,7 @@ public class InfoBean {
                 screen_orientation = 2;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
     }
 

@@ -53,7 +53,7 @@ public class RHttpClient {
     }
 
     public static RResult<String> get(final String urlStr, final String downloadPath, final Map<String, String> headers) {
-        L.d(TAG, "http get url=" + urlStr);
+        //L.d(TAG, "http get url=" + urlStr);
         RResult<String> result = new RResult<>();
 
         HttpURLConnection urlConnection = null;
@@ -68,22 +68,22 @@ public class RHttpClient {
             if (resCode == RES_CODE_SUCCESS) {
                 if (downloadPath != null) {
                     long lengthLong = urlConnection.getContentLength();
-                    L.i("准备下载" + urlStr + " -> " + downloadPath + " :" + lengthLong);
+                    //L.i("准备下载" + urlStr + " -> " + downloadPath + " :" + lengthLong);
                     buildFile(downloadPath, lengthLong, urlConnection.getInputStream());
 
                     result.obj = downloadPath;
                 } else {
                     result.obj = buildString(urlConnection.getInputStream());
                 }
-                L.d(TAG, "http get success, result=" + result.obj + ", url=" + urlStr);
+                //L.d(TAG, "http get success, result=" + result.obj + ", url=" + urlStr);
             } else {
                 result.error = buildString(urlConnection.getErrorStream());
-                L.e(TAG, "http get failed, code=" + resCode + ", url=" + urlStr);
+                //L.e(TAG, "http get failed, code=" + resCode + ", url=" + urlStr);
             }
         } catch (Exception e) {
             e.printStackTrace();
             result.e = e;
-            L.e(TAG, "http get error, e=" + e.getMessage() + ", url=" + urlStr);
+            //L.e(TAG, "http get error, e=" + e.getMessage() + ", url=" + urlStr);
         } finally {
             if (urlConnection != null) {
                 urlConnection.disconnect();
@@ -97,7 +97,7 @@ public class RHttpClient {
     }
 
     public static <T> RResult<String> post(final String urlStr, final Map<String, String> headers, T body) {
-        L.d(TAG, "http post url=" + urlStr);
+        //L.d(TAG, "http post url=" + urlStr);
         RResult<String> result = new RResult<>();
 
         HttpURLConnection urlConnection = null;
@@ -111,15 +111,15 @@ public class RHttpClient {
             // response
             if (resCode == RES_CODE_SUCCESS) {
                 result.obj = buildString(urlConnection.getInputStream());
-                L.d(TAG, "http post success, result=" + result + ", url=" + urlStr);
+                //L.d(TAG, "http post success, result=" + result + ", url=" + urlStr);
             } else {
                 result.error = buildString(urlConnection.getErrorStream());
-                L.e(TAG, "http post failed, code=" + resCode + ", url=" + urlStr);
+                //L.e(TAG, "http post failed, code=" + resCode + ", url=" + urlStr);
             }
         } catch (Exception e) {
             e.printStackTrace();
             result.e = e;
-            L.e(TAG, "http post error, e=" + e.getMessage() + ", url=" + urlStr);
+            //L.e(TAG, "http post error, e=" + e.getMessage() + ", url=" + urlStr);
         } finally {
             if (urlConnection != null) {
                 urlConnection.disconnect();

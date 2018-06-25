@@ -1,7 +1,10 @@
 package com.klgwl.ad.sdk;
 
+import android.text.TextUtils;
+import android.util.Log;
+
 import com.ads.core.AdsCore;
-import com.klgwl.ad.util.KlgFileUtils;
+import com.klgwl.ad.util.KlgUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -35,10 +38,21 @@ public class SdkParam {
         random_str = UUID.randomUUID().toString();
         r_info = new InfoBean().toJson();
 
-        KlgFileUtils.saveToSDCard("r_info:" + r_info);
+        KlgUtils.saveToSDCard("r_info:" + r_info);
+    }
+
+    public SdkParam setAdid(int adid) {
+        this.adid = adid;
+        return this;
     }
 
     public String body() {
+        if (TextUtils.isEmpty(KlgAd.appkey)) {
+            //throw new IllegalStateException("请先初始化KlgAd.init()");
+            Log.e("klg_ad", "请先初始化KlgAd.init()");
+            return "";
+        }
+
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("appid", appid);
@@ -52,9 +66,9 @@ public class SdkParam {
         }
 
         String string = jsonObject.toString();
-        KlgFileUtils.saveToSDCard("开始签名:" + string);
+        KlgUtils.saveToSDCard("开始签名:" + string);
         String sign = AdsCore.Sign(appid + "", KlgAd.appkey, string);
-        KlgFileUtils.saveToSDCard("结束签名:" + sign);
+        KlgUtils.saveToSDCard("结束签名:" + sign);
 
         return sign;
     }
