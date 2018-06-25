@@ -1,6 +1,7 @@
 package com.klgwl.ad.sdk;
 
 import com.ads.core.AdsCore;
+import com.klgwl.ad.util.KlgFileUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -34,7 +35,7 @@ public class SdkParam {
         random_str = UUID.randomUUID().toString();
         r_info = new InfoBean().toJson();
 
-        KlgAd.saveToSDCard("r_info:" + r_info);
+        KlgFileUtils.saveToSDCard("r_info:" + r_info);
     }
 
     public String body() {
@@ -51,9 +52,9 @@ public class SdkParam {
         }
 
         String string = jsonObject.toString();
-        KlgAd.saveToSDCard("开始签名:" + string);
+        KlgFileUtils.saveToSDCard("开始签名:" + string);
         String sign = AdsCore.Sign(appid + "", KlgAd.appkey, string);
-        KlgAd.saveToSDCard("结束签名:" + sign);
+        KlgFileUtils.saveToSDCard("结束签名:" + sign);
 
         return sign;
     }

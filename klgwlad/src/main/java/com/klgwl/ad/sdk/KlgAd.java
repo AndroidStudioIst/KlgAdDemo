@@ -10,8 +10,6 @@ import com.klgwl.ad.util.L;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.UUID;
 
 /**
@@ -45,7 +43,7 @@ public class KlgAd {
     }
 
 
-    private static String getAppInternalDir(String folder) {
+    public static String getAppInternalDir(String folder) {
         if (folder == null) {
             folder = "";
         }

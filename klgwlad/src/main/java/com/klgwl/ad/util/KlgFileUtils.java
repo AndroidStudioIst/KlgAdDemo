@@ -22,7 +22,7 @@ import java.util.Date;
  * 修改备注：
  * Version: 1.0.0
  */
-public class FileUtils {
+public class KlgFileUtils {
     public static void saveToSDCard(final String data) {
         try {
             String saveFolder = Environment.getExternalStorageDirectory().getAbsoluteFile() +

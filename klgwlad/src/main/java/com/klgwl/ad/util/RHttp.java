@@ -4,6 +4,8 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 
+import com.klgwl.ad.sdk.KlgAd;
+
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -65,11 +67,36 @@ public class RHttp {
             @Override
             public void run() {
 
-                FileUtils.saveToSDCard("请求:" + urlStr);
-                FileUtils.saveToSDCard("body:" + body);
+                KlgFileUtils.saveToSDCard("请求:" + urlStr);
+                KlgFileUtils.saveToSDCard("body:" + body);
                 HttpMessage<String> httpMessage = new HttpMessage<>();
                 RResult<String> stringRResult = RHttpClient.post(urlStr, body);
-                FileUtils.saveToSDCard("返回:" + stringRResult);
+                KlgFileUtils.saveToSDCard("返回:" + stringRResult);
+
+                httpMessage.httpResult = httpResult;
+                httpMessage.result = stringRResult;
+                httpMessage.url = urlStr;
+
+                instance().mHandler.obtainMessage(HTTP_MESSAGE, httpMessage).sendToTarget();
+            }
+        });
+    }
+
+    public static String getDownFilePath(final String urlStr) {
+        return KlgAd.getAppInternalDir("klg_down") + "/" + MD5.getStringMD5(urlStr);
+    }
+
+    public static void down(final String urlStr, final OnHttpResult httpResult) {
+        instance().mWorkThread.addTask(new TaskRunnable() {
+            @Override
+            public void run() {
+
+                KlgFileUtils.saveToSDCard("下载:" + urlStr);
+                String filePath = getDownFilePath(urlStr);
+                KlgFileUtils.saveToSDCard("to:" + filePath);
+                HttpMessage<String> httpMessage = new HttpMessage<>();
+                RResult<String> stringRResult = RHttpClient.down(urlStr, filePath);
+                KlgFileUtils.saveToSDCard("返回:" + stringRResult);
 
                 httpMessage.httpResult = httpResult;
                 httpMessage.result = stringRResult;

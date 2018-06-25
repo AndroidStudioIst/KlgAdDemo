@@ -1,11 +1,17 @@
 package com.klgwl.ad.util;
 
 import android.text.TextUtils;
+import android.text.format.Formatter;
+
+import com.klgwl.ad.sdk.KlgAd;
 
 import org.json.JSONObject;
 
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -34,11 +40,19 @@ public class RHttpClient {
     private static final String HTTP_GET = "GET";
     private static final String HTTP_POST = "POST";
 
+    public static RResult<String> down(final String urlStr, final String filePath) {
+        return get(urlStr, filePath, null);
+    }
+
     public static RResult<String> get(final String urlStr, String... args) {
         return get(urlStr, map(args));
     }
 
     public static RResult<String> get(final String urlStr, final Map<String, String> headers) {
+        return get(urlStr, null, headers);
+    }
+
+    public static RResult<String> get(final String urlStr, final String downloadPath, final Map<String, String> headers) {
         L.d(TAG, "http get url=" + urlStr);
         RResult<String> result = new RResult<>();
 
@@ -52,7 +66,15 @@ public class RHttpClient {
 
             // response
             if (resCode == RES_CODE_SUCCESS) {
-                result.obj = buildString(urlConnection.getInputStream());
+                if (downloadPath != null) {
+                    long lengthLong = urlConnection.getContentLength();
+                    L.i("准备下载" + urlStr + " -> " + downloadPath + " :" + lengthLong);
+                    buildFile(downloadPath, lengthLong, urlConnection.getInputStream());
+
+                    result.obj = downloadPath;
+                } else {
+                    result.obj = buildString(urlConnection.getInputStream());
+                }
                 L.d(TAG, "http get success, result=" + result.obj + ", url=" + urlStr);
             } else {
                 result.error = buildString(urlConnection.getErrorStream());
@@ -213,6 +235,44 @@ public class RHttpClient {
         }
 
         return new String(os.toByteArray(), CHARSET);
+    }
+
+    private static void buildFile(final String filePath, final long contentLength, final InputStream is) throws IOException {
+        if (is == null) {
+            return;
+        }
+
+        String tempPath = filePath + ".klg_temp";
+        File tempFile = new File(tempPath);
+        BufferedOutputStream os = new BufferedOutputStream(new FileOutputStream(tempFile, false));
+        try {
+            int len;
+            byte buffer[] = new byte[BUFFER_SIZE];
+            long writeLen = 0;
+
+            L.i("开始下载:" + tempPath + " " + Formatter.formatFileSize(KlgAd.mApplication, contentLength));
+            while ((len = is.read(buffer)) != -1) {
+                os.write(buffer, 0, len);
+                writeLen += len;
+
+                //L.d(tempPath + " 下载中-> " + writeLen + " " + writeLen * 1f / contentLength);
+            }
+            os.flush();
+
+            File targetFile = new File(filePath);
+            boolean rename = tempFile.renameTo(targetFile);
+
+            L.i("重命名:" + tempPath + "->" + filePath + " " + rename);
+            if (!rename) {
+                targetFile.delete();
+                tempFile.renameTo(targetFile);
+            }
+        } catch (IOException e) {
+            throw e;
+        } finally {
+            is.close();
+            os.close();
+        }
     }
 
     /**
